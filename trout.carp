@@ -1,0 +1,76 @@
+(load "test.carp")
+
+(deftype (ArrayIterator a) [array (Array a)])
+
+(use ArrayIterator)
+
+(defmodule Array
+  (defn iterator [array] (init array)))
+
+(use Array)
+
+(defmodule ArrayIterator
+  (defn = [a b] (= (array a) (array b)))
+
+  (defn step [a]
+    (Pair.init (first (array &a))
+               (iterator (suffix-array (array &a) 1)))))
+
+(use Test)
+
+(defmodule Array
+  (defn test-constructor [test]
+    (let [i (iterator [1 2 3])]
+      (assert-equal test
+                    (array &i)
+                    &[1 2 3]
+                    "test constructor"))))
+
+(use Maybe)
+
+(defn test-step-once [test]
+  (let [i (iterator [1 2 3])
+        s1 (step i)]
+    (assert-equal test
+                  &s1
+                  &(Pair.init (Just 1) (iterator [2 3]))
+                  "test step once")))
+
+(defn test-step-twice [test]
+  (let [i (iterator [1 2 3])
+        s1 (step i)
+        s2 (step @(Pair.b &s1))]
+    (assert-equal test
+                  &s2
+                  &(Pair.init (Just 2) (iterator [3]))
+                  "test step twice")))
+
+(defn test-step-thrice [test]
+  (let [i (iterator [1 2 3])
+        s1 (step i)
+        s2 (step @(Pair.b &s1))
+        s3 (step @(Pair.b &s2))]
+    (assert-equal test
+                  &s3
+                  &(Pair.init (Just 3) (iterator []))
+                  "test step thrice")))
+
+(defn test-step-empty [test]
+  (let [i (iterator [1 2 3])
+        s1 (step i)
+        s2 (step @(Pair.b &s1))
+        s3 (step @(Pair.b &s2))
+        s4 (step @(Pair.b &s3))]
+    (assert-equal test
+                  &s4
+                  &(Pair.init (Nothing) (iterator []))
+                  "test step empty")))
+
+(defn main []
+  (with-test test
+    (test-constructor test)
+    (test-step-once test)
+    (test-step-twice test)
+    (test-step-thrice test)
+    (test-step-empty test)))
+  
