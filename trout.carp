@@ -13,8 +13,14 @@
   (defn = [a b] (= (array a) (array b)))
 
   (defn step [a]
-    (Pair.init (first (array &a))
-               (iterator (suffix-array (array &a) 1)))))
+    (let [arr (array &a)]
+      (Pair.init (first arr)
+                 (iterator (suffix-array arr 1)))))
+
+  (defn step-back [a]
+    (let [arr (array &a)]
+      (Pair.init (last arr)
+                 (iterator (prefix-array arr (dec (Array.length arr))))))))
 
 (use Test)
 
@@ -66,11 +72,53 @@
                   &(Pair.init (Nothing) (iterator []))
                   "test step empty")))
 
+(defn test-step-back-once [test]
+  (let [i (iterator [1 2 3])
+        s1 (step-back i)]
+    (assert-equal test
+                  &s1
+                  &(Pair.init (Just 3) (iterator [1 2]))
+                  "test step back once")))
+
+(defn test-step-back-twice [test]
+  (let [i (iterator [1 2 3])
+        s1 (step-back i)
+        s2 (step-back @(Pair.b &s1))]
+    (assert-equal test
+                  &s2
+                  &(Pair.init (Just 2) (iterator [1]))
+                  "test step back twice")))
+
+(defn test-step-back-thrice [test]
+  (let [i (iterator [1 2 3])
+        s1 (step-back i)
+        s2 (step-back @(Pair.b &s1))
+        s3 (step-back @(Pair.b &s2))]
+    (assert-equal test
+                  &s3
+                  &(Pair.init (Just 1) (iterator []))
+                  "test step back thrice")))
+
+(defn test-step-back-empty [test]
+  (let [i (iterator [1 2 3])
+        s1 (step-back i)
+        s2 (step-back @(Pair.b &s1))
+        s3 (step-back @(Pair.b &s2))
+        s4 (step-back @(Pair.b &s3))]
+    (assert-equal test
+                  &s4
+                  &(Pair.init (Nothing) (iterator []))
+                  "test step back empty")))
+
 (defn main []
   (with-test test
     (test-constructor test)
     (test-step-once test)
     (test-step-twice test)
     (test-step-thrice test)
-    (test-step-empty test)))
+    (test-step-empty test)
+    (test-step-back-once test)
+    (test-step-back-twice test)
+    (test-step-back-thrice test)
+    (test-step-back-empty test)))
   
