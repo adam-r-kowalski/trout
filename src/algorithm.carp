@@ -1,0 +1,10 @@
+(use Maybe)
+
+(definterface step (λ [i] (Pair (Maybe a) i)))
+
+(defn fold [f z xs]
+  (let [s (step xs)
+        v @(Pair.a &s)]
+    (match v
+           (Nothing) z
+           (Just x) (fold f (f z x) @(Pair.b &s)))))

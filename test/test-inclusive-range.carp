@@ -1,0 +1,97 @@
+(load "test.carp")
+(load "../src/inclusive-range.carp")
+
+(use-all Test InclusiveRange)
+
+(defn construct-inclusive-range [test]
+  (assert-equal test
+                &(inclusive-range 1 3)
+                &(InclusiveRange.init 1 3)
+                "construct inclusive range"))
+
+(defn step-inclusive-range-once [test]
+  (let [r (inclusive-range 1 3)
+        s1 (step r)]
+    (assert-equal test
+                  &s1
+                  &(Pair.init (Just 1) (inclusive-range 2 3))
+                  "step inclusive range once")))
+
+(defn step-inclusive-range-twice [test]
+  (let [r (inclusive-range 1 3)
+        s1 (step r)
+        s2 (step @(Pair.b &s1))]
+    (assert-equal test
+                  &s2
+                  &(Pair.init (Just 2) (inclusive-range 3 3))
+                  "step inclusive range twice")))
+
+(defn step-inclusive-range-thrice [test]
+  (let [r (inclusive-range 1 3)
+        s1 (step r)
+        s2 (step @(Pair.b &s1))
+        s3 (step @(Pair.b &s2))]
+    (assert-equal test
+                  &s3
+                  &(Pair.init (Just 3) (inclusive-range 4 3))
+                  "step inclusive range thrice")))
+
+(defn step-empty-inclusive-range [test]
+  (let [r (inclusive-range 1 3)
+        s1 (step r)
+        s2 (step @(Pair.b &s1))
+        s3 (step @(Pair.b &s2))
+        s4 (step @(Pair.b &s3))]
+    (assert-equal test
+                  &s4
+                  &(Pair.init (Nothing) (inclusive-range 4 3))
+                  "step empty inclusive range")))
+
+(defn step-back-inclusive-range-once [test]
+  (let [r (inclusive-range 1 3)
+        s1 (step-back r)]
+    (assert-equal test
+                  &s1
+                  &(Pair.init (Just 3) (inclusive-range 1 2))
+                  "step back inclusive range once")))
+
+(defn step-back-inclusive-range-twice [test]
+  (let [r (inclusive-range 1 3)
+        s1 (step-back r)
+        s2 (step-back @(Pair.b &s1))]
+    (assert-equal test
+                  &s2
+                  &(Pair.init (Just 2) (inclusive-range 1 1))
+                  "step back inclusive range twice")))
+
+(defn step-back-inclusive-range-thrice [test]
+  (let [r (inclusive-range 1 3)
+        s1 (step-back r)
+        s2 (step-back @(Pair.b &s1))
+        s3 (step-back @(Pair.b &s2))]
+    (assert-equal test
+                  &s3
+                  &(Pair.init (Just 1) (inclusive-range 1 0))
+                  "step back inclusive range thrice")))
+
+(defn step-back-empty-inclusive-range [test]
+  (let [r (inclusive-range 1 3)
+        s1 (step-back r)
+        s2 (step-back @(Pair.b &s1))
+        s3 (step-back @(Pair.b &s2))
+        s4 (step-back @(Pair.b &s3))]
+    (assert-equal test
+                  &s4
+                  &(Pair.init (Nothing) (inclusive-range 1 0))
+                  "step empty back inclusive range")))
+
+(deftest test
+  (construct-inclusive-range test)
+  (step-inclusive-range-once test)
+  (step-inclusive-range-twice test)
+  (step-inclusive-range-thrice test)
+  (step-empty-inclusive-range test)
+  (step-back-inclusive-range-once test)
+  (step-back-inclusive-range-twice test)
+  (step-back-inclusive-range-thrice test)
+  (step-back-empty-inclusive-range test))

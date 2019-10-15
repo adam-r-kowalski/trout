@@ -1,0 +1,21 @@
+(use Array)
+(use Maybe)
+
+(deftype (ArrayIterator a) [array (Array a)])
+
+(use ArrayIterator)
+
+(defmodule ArrayIterator
+  (defn iterator [array] (init array))
+
+  (defn = [a b] (= (array a) (array b)))
+
+  (defn step [a]
+    (let [arr (array &a)]
+      (Pair.init (first arr)
+                 (iterator (suffix-array arr 1)))))
+
+  (defn step-back [a]
+    (let [arr (array &a)]
+      (Pair.init (last arr)
+                 (iterator (prefix-array arr (dec (Array.length arr))))))))

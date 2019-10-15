@@ -1,0 +1,28 @@
+(deftype (InclusiveRange a)
+    [begin a
+     end a])
+
+(defn inclusive-range [begin end]
+  (InclusiveRange.init begin end))
+
+(use-all Maybe InclusiveRange)
+
+(defmodule InclusiveRange
+  (defn = [a b]
+    (and (= (begin a) (begin b))
+         (= (end a) (end b))))
+
+  (defn step [r]
+    (let [b @(begin &r)
+          e @(end &r)]
+      (if (> b e)
+        (Pair.init (Nothing) r)
+        (Pair.init (Just b) (inclusive-range (inc b) e)))))
+
+  (defn step-back [r]
+    (let [b @(begin &r)
+          e @(end &r)]
+      (if (< e b)
+        (Pair.init (Nothing) r)
+        (Pair.init (Just e) (inclusive-range b (dec e)))))))
+
