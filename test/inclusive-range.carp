@@ -3,7 +3,6 @@
 
 (use-all Test InclusiveRange)
 
-
 (deftest test
   (assert-equal test
                 &(inclusive-range 1 3)
