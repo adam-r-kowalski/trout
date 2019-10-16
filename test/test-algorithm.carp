@@ -5,18 +5,13 @@
 
 (use-all Test ArrayIterator InclusiveRange)
 
-(defn fold-array-iterator [test]
+(deftest test
   (assert-equal test
                 &(fold + 0 (iterator [1 2 3]))
                 &6
-                "fold iterator"))
+                "fold array iterator")
 
-(defn fold-inclusive-range [test]
   (assert-equal test
                 &(fold + 0 (inclusive-range 5 8))
                 &26
-                "fold inclusive-range"))
-
-(deftest test
-  (fold-array-iterator test)
-  (fold-inclusive-range test))
+                "fold inclusive range"))

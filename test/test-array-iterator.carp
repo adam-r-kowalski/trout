@@ -3,95 +3,77 @@
 
 (use-all Test ArrayIterator)
 
-(defn construct-array-iterator [test]
+(deftest test
   (assert-equal test
                 &(iterator [1 2 3])
                 &(ArrayIterator.init [1 2 3])
-                "construct array iterator"))
+                "construct array iterator")
 
-(defn step-array-iterator [test]
-    (let [i (iterator [1 2 3])
-          s1 (step i)]
-      (assert-equal test
-                    &s1
-                    &(Pair.init (Just 1) (iterator [2 3]))
-                    "step array iterator")))
+  (let [i (iterator [1 2 3])
+        s1 (step i)]
+    (assert-equal test
+                  &s1
+                  &(Pair.init (Just 1) (iterator [2 3]))
+                  "step array iterator"))
 
-(defn step-array-iterator-twice [test]
-    (let [i (iterator [1 2 3])
-          s1 (step i)
-          s2 (step @(Pair.b &s1))]
-      (assert-equal test
-                    &s2
-                    &(Pair.init (Just 2) (iterator [3]))
-                    "step array iterator twice")))
+  (let [i (iterator [1 2 3])
+        s1 (step i)
+        s2 (step @(Pair.b &s1))]
+    (assert-equal test
+                  &s2
+                  &(Pair.init (Just 2) (iterator [3]))
+                  "step array iterator twice"))
 
-(defn step-array-iterator-thrice [test]
-    (let [i (iterator [1 2 3])
-          s1 (step i)
-          s2 (step @(Pair.b &s1))
-          s3 (step @(Pair.b &s2))]
-      (assert-equal test
-                    &s3
-                    &(Pair.init (Just 3) (iterator []))
-                    "step array iterator thrice")))
+  (let [i (iterator [1 2 3])
+        s1 (step i)
+        s2 (step @(Pair.b &s1))
+        s3 (step @(Pair.b &s2))]
+    (assert-equal test
+                  &s3
+                  &(Pair.init (Just 3) (iterator []))
+                  "step array iterator thrice"))
 
-(defn step-empty-array-iterator [test]
-    (let [i (iterator [1 2 3])
-          s1 (step i)
-          s2 (step @(Pair.b &s1))
-          s3 (step @(Pair.b &s2))
-          s4 (step @(Pair.b &s3))]
-      (assert-equal test
-                    &s4
-                    &(Pair.init (Nothing) (iterator []))
-                    "step empty array iterator")))
+  (let [i (iterator [1 2 3])
+        s1 (step i)
+        s2 (step @(Pair.b &s1))
+        s3 (step @(Pair.b &s2))
+        s4 (step @(Pair.b &s3))]
+    (assert-equal test
+                  &s4
+                  &(Pair.init (Nothing) (iterator []))
+                  "step empty array iterator"))
 
-(defn step-back-array-iterator [test]
-    (let [i (iterator [1 2 3])
-          s1 (step-back i)]
-      (assert-equal test
-                    &s1
-                    &(Pair.init (Just 3) (iterator [1 2]))
-                    "step back array iterator")))
+  (let [i (iterator [1 2 3])
+        s1 (step-back i)]
+    (assert-equal test
+                  &s1
+                  &(Pair.init (Just 3) (iterator [1 2]))
+                  "step back array iterator"))
 
-(defn step-back-array-iterator-twice [test]
-    (let [i (iterator [1 2 3])
-          s1 (step-back i)
-          s2 (step-back @(Pair.b &s1))]
-      (assert-equal test
-                    &s2
-                    &(Pair.init (Just 2) (iterator [1]))
-                    "step back array iterator twice")))
+  (let [i (iterator [1 2 3])
+        s1 (step-back i)
+        s2 (step-back @(Pair.b &s1))]
+    (assert-equal test
+                  &s2
+                  &(Pair.init (Just 2) (iterator [1]))
+                  "step back array iterator twice"))
 
-(defn step-back-array-iterator-thrice [test]
-    (let [i (iterator [1 2 3])
-          s1 (step-back i)
-          s2 (step-back @(Pair.b &s1))
-          s3 (step-back @(Pair.b &s2))]
-      (assert-equal test
-                    &s3
-                    &(Pair.init (Just 1) (iterator []))
-                    "step back array iterator thrice")))
+  (let [i (iterator [1 2 3])
+        s1 (step-back i)
+        s2 (step-back @(Pair.b &s1))
+        s3 (step-back @(Pair.b &s2))]
+    (assert-equal test
+                  &s3
+                  &(Pair.init (Just 1) (iterator []))
+                  "step back array iterator thrice"))
 
-(defn step-back-empty-array-iterator [test]
-    (let [i (iterator [1 2 3])
-          s1 (step-back i)
-          s2 (step-back @(Pair.b &s1))
-          s3 (step-back @(Pair.b &s2))
-          s4 (step-back @(Pair.b &s3))]
-      (assert-equal test
-                    &s4
-                    &(Pair.init (Nothing) (iterator []))
-                    "step back empty array iterator")))
+  (let [i (iterator [1 2 3])
+        s1 (step-back i)
+        s2 (step-back @(Pair.b &s1))
+        s3 (step-back @(Pair.b &s2))
+        s4 (step-back @(Pair.b &s3))]
+    (assert-equal test
+                  &s4
+                  &(Pair.init (Nothing) (iterator []))
+                  "step back empty array iterator")))
 
-(deftest test
-  (construct-array-iterator test)
-  (step-array-iterator test)
-  (step-array-iterator-twice test)
-  (step-array-iterator-thrice test)
-  (step-empty-array-iterator test)
-  (step-back-array-iterator test)
-  (step-back-array-iterator-twice test)
-  (step-back-array-iterator-thrice test)
-  (step-back-empty-array-iterator test))
