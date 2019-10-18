@@ -1,0 +1,55 @@
+(load "test.carp")
+(load "../src/inclusive-range.carp")
+(load "../src/interfaces.carp")
+
+(use-all Test Maybe InclusiveRange)
+
+(deftype (MapIterator a b i)
+    [function (Fn [a] b)
+     iterator i])
+
+(defmodule MapIterator
+  (defn step [m]
+    (let [p (step @(iterator &m))]
+      (match @(Pair.a &p)
+             (Nothing) (Pair.init (Nothing) m)
+             (Just x) (Pair.init (Just (~(function &m) x))
+                                 (set-iterator m @(Pair.b &p)))))))
+
+(defn square [x]
+  (pow (the Int x) 2))
+
+(deftest test
+  (let [m (MapIterator.init square (inclusive-range 3 5))
+        s1 (step m)]
+    (assert-equal test
+                  (Pair.a &s1)
+                  &(Just 9)
+                  "step map iterator"))
+
+  (let [m (MapIterator.init square (inclusive-range 3 5))
+        s1 (step m)
+        s2 (step @(Pair.b &s1))]
+    (assert-equal test
+                  (Pair.a &s2)
+                  &(Just 16)
+                  "step map iterator twice"))
+
+  (let [m (MapIterator.init square (inclusive-range 3 5))
+        s1 (step m)
+        s2 (step @(Pair.b &s1))
+        s3 (step @(Pair.b &s2))]
+    (assert-equal test
+                  (Pair.a &s3)
+                  &(Just 25)
+                  "step map iterator thrice"))
+
+  (let [m (MapIterator.init square (inclusive-range 3 5))
+        s1 (step m)
+        s2 (step @(Pair.b &s1))
+        s3 (step @(Pair.b &s2))
+        s4 (step @(Pair.b &s3))]
+    (assert-equal test
+                  (Pair.a &s4)
+                  &(Nothing)
+                  "step empty map iterator")))

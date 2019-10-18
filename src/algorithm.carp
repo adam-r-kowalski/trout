@@ -1,6 +1,6 @@
-(use Maybe)
+(load "interfaces.carp")
 
-(definterface step (λ [i] (Pair (Maybe a) i)))
+(use Maybe)
 
 (defn fold [f z xs]
   (let [s (step xs)
